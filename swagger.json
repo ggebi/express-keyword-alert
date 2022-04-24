@@ -2,9 +2,9 @@
   "openapi": "3.0.0",
 
   "info": {
-    "title": "boilerplate sample API",
+    "title": "Keyword alert API",
     "description": "sample API.",
-    "termsOfService": "https://github.com/jhwmon/express-boilerplate-mysql",
+    "termsOfService": "https://github.com/jhwmon/express-keyword-alert",
     "contact": {
       "email": "jmonaco88@gmail.com"
     },
@@ -13,7 +13,7 @@
 
   "externalDocs": {
     "description": "Find out more about this template",
-    "url": "https://github.com/jhwmon/express-boilerplate-mysql"
+    "url": "https://github.com/jhwmon/express-keyword-alert"
   },
 
   "servers": [
@@ -24,39 +24,53 @@
 
   "tags": [
     {
-      "name": "Auth",
-      "description": "Authorization routes"
+      "name": "Board",
+      "description": "Board routes"
     },
     {
-      "name": "User",
-      "description": "User routes"
+      "name": "Comments",
+      "description": "Comments routes"
+    },
+    {
+      "name": "Keyword",
+      "description": "Keyword routes"
     }
   ],
 
   "paths": {
-    "/auth/login": {
+    "/boards": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "광고파트너 백오피스 로그인",
-        "operationId": "loginUser",
+        "tags": ["Board"],
+        "summary": "게시글 추가",
+        "operationId": "createBoards",
         "requestBody": {
           "required": true,
-          "description": "User fields to login",
+          "description": "게시글 추가에 필요한 필드",
           "content": {
-            "application/x-www-form-urlencoded": {
+            "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["userid", "password"],
+                "required": ["title", "contents", "owner", "pwd"],
                 "properties": {
-                  "userid": {
+                  "title": {
                     "type": "string",
-                    "description": "광고파트너 아이디",
-                    "example": "jmonaco88@gmail.com"
+                    "description": "제목",
+                    "example": "게시글 제목1"
                   },
-                  "password": {
+                  "contents": {
                     "type": "string",
-                    "description": "광고파트너 패스워드",
-                    "example": "your-password ..."
+                    "description": "게시글 내용",
+                    "example": "게시글 내용1"
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "소유자 아이디",
+                    "example": "jhwmon"
+                  },
+                  "pwd": {
+                    "type": "string",
+                    "description": "게시글 패스워드",
+                    "example": "1234"
                   }
                 }
               }
@@ -65,23 +79,53 @@
         },
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "게시글 추가 성공",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 2000
-                    },
-                    "accessToken": {
+                    "message": {
                       "type": "string",
-                      "example": "access token..."
+                      "example": "수정 성공"
                     },
-                    "refreshToken": {
-                      "type": "string",
-                      "example": "refresh token..."
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "board": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "title": {
+                              "type": "string",
+                              "example": "제목1"
+                            },
+                            "contents": {
+                              "type": "string",
+                              "example": "내용1"
+                            },
+                            "owner": {
+                              "type": "string",
+                              "example": "jhwmon"
+                            },
+                            "pwd": {
+                              "type": "string",
+                              "example": "1234"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2022-04-24 12:00:00"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2022-04-24 13:01:02"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -95,33 +139,9 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 4000
-                    },
                     "message": {
                       "type": "string",
                       "example": "잘못 된 요청"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Incorrect email and password",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 4010
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "인증 에러"
                     }
                   }
                 }
@@ -132,16 +152,16 @@
         "x-codegen-request-body-name": "body"
       }
     },
-    "/auth/logout": {
+    "/board/{boardId}": {
       "delete": {
-        "tags": ["Auth"],
-        "summary": "광고파트너 백오피스 로그아웃",
-        "operationId": "logoutUser",
+        "tags": ["Board"],
+        "summary": "게시글 삭제",
+        "operationId": "deleteBoard",
         "parameters": [
           {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
+            "name": "boardId",
+            "in": "path",
+            "description": "ID of board to delete",
             "required": true,
             "schema": {
               "type": "string"
@@ -156,9 +176,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {
-                      "type": "string"
-                    },
                     "message": {
                       "type": "string"
                     }

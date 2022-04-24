@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 /**
- * DB & Redis
+ * DB
  */
 db.sequelize.sync();
 

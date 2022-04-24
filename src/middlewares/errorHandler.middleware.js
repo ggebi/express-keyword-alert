@@ -23,8 +23,7 @@ export default (err, request, response, next) => {
   }
 
   return response.status(err.statusCode || 500).json({
-    code: err.code || 5000,
-    msg: err.msg || err.message,
+    message: err.msg || err.message,
     ...(err.errors && { errors: err.errors }),
     ...(!isProduction && { trace: errorMessage }),
   });

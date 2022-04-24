@@ -16,7 +16,6 @@ const updateBoard = {
   body: Joi.object().keys({
     title: Joi.string().required(),
     contents: Joi.string().required(),
-    owner: Joi.string().required(),
     pwd: Joi.string().required(),
   }),
 };
