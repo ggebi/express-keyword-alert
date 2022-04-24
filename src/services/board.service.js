@@ -2,7 +2,18 @@ import db from '../models/index';
 import { AuthorizationError } from '../helpers/errors.helper';
 
 export default {
-  find: async (limit = 20, offset = 0) => {
+  find: async (title, owner, limit = 20, offset = 0) => {
+    const conditions = {};
+
+    if (owner) {
+      conditions.owner = owner;
+    }
+    if (title) {
+      conditions.title = {
+        [db.Sequelize.Op.like]: `%${title}%`,
+      };
+    }
+
     const boards = await db.Board.findAndCountAll({
       attributes: [
         'id',
@@ -12,6 +23,7 @@ export default {
         'createdAt',
         'updatedAt',
       ],
+      where: [conditions],
       offset: parseInt(offset, 10),
       limit: parseInt(limit, 10),
       order: [['id', 'DESC']],

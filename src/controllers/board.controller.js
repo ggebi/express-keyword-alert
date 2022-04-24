@@ -28,9 +28,9 @@ export default {
    */
   findAllBoards: async (req, res) => {
     try {
-      const { page, size } = req.query;
+      const { title, owner, page, size } = req.query;
       const { limit, offset } = getPagination(page, size);
-      const data = await BoardService.find(limit, offset);
+      const data = await BoardService.find(title, owner, limit, offset);
       res.status(200).json({
         message: '게시판 리스트 조회 성공',
         data: getPagingData(data, page, limit),
