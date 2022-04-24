@@ -55,29 +55,15 @@ module.exports = (sequelize) => {
     Board.hasMany(models.Comments, { as: 'Comments', foreignKey: 'boardId' });
   };
 
-  // /**
-  //  * 패스워드 체크
-  //  * @param {*} plaintextPassword
-  //  * @param {*} hashedPassword
-  //  * @returns boolean
-  //  */
-  // Board.comparePassword = async function (plaintextPassword, hashedPassword) {
-  //   return bcrypt.compare(plaintextPassword, hashedPassword);
-  // };
-
-  // /**
-  //  * 유저아이디 중복 체크
-  //  * @param {string} userid
-  //  * @returns
-  //  */
-  // Board.checkUserid = async function (userid) {
-  //   const cnt = await this.count({ where: { userid } });
-  //   if (cnt > 0) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // };
+  /**
+   * 패스워드 체크
+   * @param {*} plaintextPassword
+   * @param {*} hashedPassword
+   * @returns boolean
+   */
+  Board.comparePassword = async function (plaintextPassword, hashedPassword) {
+    return bcrypt.compare(plaintextPassword, hashedPassword);
+  };
 
   return Board;
 };

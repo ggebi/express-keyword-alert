@@ -20,7 +20,7 @@ import db from './models';
  * Routes import
  * @type {Router | {readonly default?: Router}}
  */
-// import v1Routes from './routes/v1/index.route';
+import v1Routes from './routes/v1/index.route';
 
 /**
  * Global env variables definition
@@ -116,7 +116,7 @@ app.get('/healthcheck', function (req, res) {
 /**
  * Routes definitions
  */
-// app.use('/admin/v1/', v1Routes);
+app.use('/api/v1/', v1Routes);
 
 /**
  * This helper function is useful if we use express as a pure API endpoint

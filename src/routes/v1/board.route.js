@@ -1,10 +1,7 @@
 import express from 'express';
 import boardController from '../../controllers/board.controller';
-// import authentication from '../../middlewares/authenticate.middleware';
 import catchAsync from '../../middlewares/catchAsync.middleware';
-// import { verifyRights } from '../../middlewares/verifyRights.middleware';
 
-// const { authenticate } = authentication;
 const { findAllBoards, createBoards, modifyBoard, deleteBoard } =
   boardController;
 const router = express.Router();

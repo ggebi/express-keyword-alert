@@ -1,10 +1,23 @@
 import BoardService from '../services/board.service';
-import { validateSchema } from '../services/joi/joi.service';
+// import { validateSchema } from '../services/joi/joi.service';
 import {
   ApplicationError,
-  NotFoundError,
-  AuthenticationError,
+  // NotFoundError,
+  // AuthenticationError,
 } from '../helpers/errors.helper';
+
+const getPagination = (page, size) => {
+  const limit = size ? +size : 3;
+  const offset = page ? page * limit : 0;
+  return { limit, offset };
+};
+
+const getPagingData = (data, page, limit) => {
+  const { count: total, rows: boards } = data;
+  const currentPage = page ? +page : 0;
+  const totalPages = Math.ceil(total / limit);
+  return { total, boards, totalPages, currentPage };
+};
 
 export default {
   /**
@@ -15,116 +28,87 @@ export default {
    */
   findAllBoards: async (req, res) => {
     try {
-      const { limit, offset } = req.query;
-      const users = await BoardService.find(limit, offset);
+      const { page, size } = req.query;
+      const { limit, offset } = getPagination(page, size);
+      const data = await BoardService.find(limit, offset);
       res.status(200).json({
-        message: '유저 리스트 조회 성공',
-        data: { users },
+        message: '게시판 리스트 조회 성공',
+        data: getPagingData(data, page, limit),
       });
     } catch (error) {
       throw new ApplicationError(500, error);
     }
   },
   /**
-   *
-   * @param {} req
-   * @param {*} res
-   */
-
-  /**
-   * 유저 상세 조회
+   * 게시글 추가
    * @param req
    * @param res
    * @return {Promise<void>}
    */
-  findUserById: async (req, res) => {
-    try {
-      const user = await BoardService.findById(req.params.userId);
-      res.status(200).json({
-        message: '유저 상세 조회 성공',
-        data: { user },
-      });
-    } catch (error) {
-      throw new NotFoundError(error.message);
-    }
-  },
-  /**
-   * 유저 수정
-   * @param req
-   * @param res
-   * @param next
-   * @return {Promise<void>}
-   */
-  updateUser: async (req, res) => {
-    try {
-      const validatedData = await validateSchema.validateAsync(req.body);
+  createBoards: async (req, res) => {
+    const { title, contents, owner, pwd } = req.body;
 
-      const user = await BoardService.update(req.params.userId, validatedData);
-      delete user.password;
-
-      res.status(200).json({
-        message: '유저 정보 업데이트 성공',
-        data: { user },
-      });
-    } catch (error) {
-      throw new NotFoundError(error.message);
-    }
-  },
-  /**
-   * Delete user by id
-   * @param req
-   * @param res
-   * @return {Promise<void>}
-   */
-  deleteUser: async (req, res) => {
     try {
-      await BoardService.delete(req.params.userId);
+      const board = await BoardService.create(title, contents, owner, pwd);
       res.status(200).json({
-        message: '유저 삭제 성공',
+        message: '게시글 추가 성공',
+        data: {
+          board: board.dataValues,
+        },
       });
     } catch (error) {
       throw new ApplicationError(500, error);
     }
   },
-  findMe: async (req, res) => {
+  modifyBoard: async (req, res, next) => {
+    const { title, contents, pwd } = req.body;
+    const { boardId } = req.params;
+    let message = '';
+
     try {
-      const me = await BoardService.findById(req.currentUser.userNo);
-      res.status(200).json({
-        message: '유저 내정보 조회 성공',
-        data: { me },
+      const updatedCnt = await BoardService.update(
+        boardId,
+        title,
+        contents,
+        pwd,
+      );
+
+      if (updatedCnt[0] === 0) {
+        message = '게시글 수정 실패';
+      } else {
+        message = '게시글 수정 성공';
+      }
+
+      return res.status(200).json({
+        message,
       });
     } catch (error) {
-      throw new NotFoundError(error.message);
+      if (error instanceof ApplicationError) {
+        res.status(error.statusCode).json(error.message);
+      } else {
+        next(error);
+      }
     }
   },
-  updatePasswordUser: async (req, res) => {
+  deleteBoard: async (req, res) => {
+    const { pwd } = req.body;
+    const { boardId } = req.params;
+    let message = '';
+
     try {
-      const { password, newPassword } = req.body;
+      const deletedCnt = await BoardService.delete(boardId, pwd);
 
-      // if (
-      //   req.user.level === 'user' &&
-      //   req.user.no !== parseInt(req.params.userId, 10)
-      // ) {
-      //   return res.status(403).json({
-      //     message: '권한 없음',
-      //   });
-      // }
-
-      // 유효한 패스워드인지 체크
-      await BoardService.comparePassword(password, req.user.password);
-      // 새로운 패스워드 반영
-      await BoardService.update(req.params.userId, {
-        password: newPassword,
-      });
+      if (deletedCnt === 0) {
+        message = '게시글 삭제 실패';
+      } else {
+        message = '게시글 삭제 성공';
+      }
 
       res.status(200).json({
-        message: '유저 패스워드 업데이트 성공',
+        message,
       });
     } catch (error) {
-      if (error instanceof NotFoundError)
-        throw new NotFoundError(error.message);
-      else if (error instanceof AuthenticationError)
-        throw new AuthenticationError(error.message);
+      throw new ApplicationError(500, error);
     }
   },
 };

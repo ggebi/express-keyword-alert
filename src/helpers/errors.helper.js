@@ -8,12 +8,6 @@ export class ApplicationError extends Error {
   }
 }
 
-export class NotFoundError extends ApplicationError {
-  constructor(message) {
-    super(404, message || 'Resource not found');
-  }
-}
-
 export class ValidationError extends ApplicationError {
   constructor(message) {
     super(400, message || 'Path is required');
@@ -23,5 +17,17 @@ export class ValidationError extends ApplicationError {
 export class AuthenticationError extends ApplicationError {
   constructor(message) {
     super(401, message || 'Authentication error');
+  }
+}
+
+export class AuthorizationError extends ApplicationError {
+  constructor(message) {
+    super(403, message || 'Authorization error');
+  }
+}
+
+export class NotFoundError extends ApplicationError {
+  constructor(message) {
+    super(404, message || 'Resource not found');
   }
 }
