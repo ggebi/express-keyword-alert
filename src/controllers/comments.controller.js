@@ -1,10 +1,5 @@
 import CommentsService from '../services/comments.service';
-// import { validateSchema } from '../services/joi/joi.service';
-import {
-  ApplicationError,
-  // NotFoundError,
-  // AuthenticationError,
-} from '../helpers/errors.helper';
+import { ApplicationError } from '../helpers/errors.helper';
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 3;
