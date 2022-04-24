@@ -16,6 +16,8 @@ export default {
   matchingKeywords: async (req, res, next) => {
     const { msg } = req.body;
 
+    console.log('msg:', msg);
+
     try {
       // 특수문자 제거, 메세지 파싱
       // eslint-disable-next-line no-useless-escape

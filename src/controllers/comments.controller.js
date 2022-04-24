@@ -1,5 +1,6 @@
 import CommentsService from '../services/comments.service';
 import { ApplicationError } from '../helpers/errors.helper';
+import { SendKeywordAlert } from '../services/alert/alert.service';
 
 const getPagination = (page, size) => {
   const limit = size ? +size : 3;
@@ -56,6 +57,12 @@ export default {
           pcId,
         );
       }
+
+      /**
+       * 키워드 알림은 비동기처리
+       * 정확한 비동기 설명은 README에 남겨놓겠습니다.
+       */
+      SendKeywordAlert(msg);
 
       res.status(200).json({
         message: '댓글 추가 성공',
