@@ -2,6 +2,7 @@ import _ from 'lodash';
 import express from 'express';
 import boardRoutes from './board.route';
 import commentsRoutes from './comments.route';
+import keywordRoutes from './keyword.route';
 import swaggerRoutes from './swagger.route';
 
 const router = express.Router();
@@ -14,6 +15,10 @@ const defaultRoutes = [
   {
     path: '/comments',
     route: commentsRoutes,
+  },
+  {
+    path: '/keywords',
+    route: keywordRoutes,
   },
 ];
 
