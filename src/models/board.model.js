@@ -29,7 +29,7 @@ module.exports = (sequelize) => {
       },
       pwd: {
         type: DataTypes.CHAR(72),
-        allowNull: true,
+        allowNull: false,
         comment: '비밀번호',
         set(value) {
           this.setDataValue('pwd', bcrypt.hashSync(value, 10));
@@ -46,6 +46,16 @@ module.exports = (sequelize) => {
           unique: true,
           using: 'BTREE',
           fields: [{ name: 'id' }],
+        },
+        {
+          name: 'searchTitle',
+          using: 'BTREE',
+          fields: [{ name: 'title' }],
+        },
+        {
+          name: 'searchOwner',
+          using: 'BTREE',
+          fields: [{ name: 'owner' }],
         },
       ],
     },

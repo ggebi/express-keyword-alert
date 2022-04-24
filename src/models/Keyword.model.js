@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
 
 module.exports = (sequelize) => {
-  const AlertKeyword = sequelize.define(
-    'AlertKeyword',
+  const Keyword = sequelize.define(
+    'Keyword',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -16,15 +16,10 @@ module.exports = (sequelize) => {
         allowNull: false,
         comment: '키워드',
       },
-      owner: {
-        type: DataTypes.STRING(20),
-        allowNull: false,
-        comment: '작성자 이름',
-      },
     },
     {
       freezeTableName: true,
-      tableName: 'AlertKeyword',
+      tableName: 'Keyword',
       timestamps: true,
       indexes: [
         {
@@ -33,9 +28,21 @@ module.exports = (sequelize) => {
           using: 'BTREE',
           fields: [{ name: 'id' }],
         },
+        {
+          name: 'searchKeyword',
+          using: 'BTREE',
+          fields: [{ name: 'keyword' }],
+        },
       ],
     },
   );
 
-  return AlertKeyword;
+  Keyword.associate = function (models) {
+    Keyword.hasMany(models.KeywordSubscribers, {
+      as: 'KeywordSubscribers',
+      foreignKey: 'keywordId',
+    });
+  };
+
+  return Keyword;
 };
