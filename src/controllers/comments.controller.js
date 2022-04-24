@@ -9,10 +9,10 @@ const getPagination = (page, size) => {
 };
 
 const getPagingData = (data, page, limit) => {
-  const { count: total, rows: boards } = data;
+  const { count: total, rows: comments } = data;
   const currentPage = page ? +page : 0;
   const totalPages = Math.ceil(total / limit);
-  return { total, boards, totalPages, currentPage };
+  return { total, comments, totalPages, currentPage };
 };
 
 export default {

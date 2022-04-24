@@ -39,6 +39,112 @@
 
   "paths": {
     "/boards": {
+      "get": {
+        "tags": ["Board"],
+        "summary": "게시글 목록",
+        "operationId": "findBoards",
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "제목 검색",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "description": "아이디 검색",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "페이지 번호(0부터 시작함)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "페이지당 사이즈",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "boards": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "contents": {
+                                "type": "string"
+                              },
+                              "owner": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing credentials",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      },
       "post": {
         "tags": ["Board"],
         "summary": "게시글 추가",
@@ -153,6 +259,76 @@
       }
     },
     "/board/{boardId}": {
+      "patch": {
+        "tags": ["Board"],
+        "summary": "게시글 수정",
+        "operationId": "updateBoardByBoardId",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "path",
+            "description": "ID of board to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Board fields to update",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "contents": {
+                    "type": "string"
+                  },
+                  "pwd": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "게시글 수정 성공"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing credentials",
+            "content": {}
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      },
       "delete": {
         "tags": ["Board"],
         "summary": "게시글 삭제",
@@ -188,35 +364,37 @@
         "x-codegen-request-body-name": "body"
       }
     },
-    "/auth/signup": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "광고파트너 백오피스 회원가입",
-        "operationId": "signupUser",
-        "requestBody": {
-          "required": true,
-          "description": "User fields to signup",
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "type": "object",
-                "required": ["userid", "password"],
-                "properties": {
-                  "userid": {
-                    "type": "string",
-                    "description": "광고파트너 아이디",
-                    "example": "jmonaco88@gmail.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "광고파트너 패스워드",
-                    "example": "your-password ..."
-                  }
-                }
-              }
+    "/comments": {
+      "get": {
+        "tags": ["Comments"],
+        "summary": "댓글 목록",
+        "operationId": "findComments",
+        "parameters": [
+          {
+            "name": "boardId",
+            "in": "query",
+            "description": "게시글 번호",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "페이지 번호(0부터 시작함)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "페이지당 사이즈",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -225,17 +403,161 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 2000
+                    "message": {
+                      "type": "string"
                     },
-                    "accessToken": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "number"
+                        },
+                        "totalPages": {
+                          "type": "number"
+                        },
+                        "currentPage": {
+                          "type": "number"
+                        },
+                        "comments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "boardId": {
+                                "type": "integer"
+                              },
+                              "msg": {
+                                "type": "string"
+                              },
+                              "owner": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string"
+                              },
+                              "updatedAt": {
+                                "type": "string"
+                              },
+                              "subComments": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer"
+                                  },
+                                  "pcId": {
+                                    "type": "integer"
+                                  },
+                                  "msg": {
+                                    "type": "string"
+                                  },
+                                  "owner": {
+                                    "type": "string"
+                                  },
+                                  "createdAt": {
+                                    "type": "string"
+                                  },
+                                  "updatedAt": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing credentials",
+            "content": {}
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-codegen-request-body-name": "body"
+      },
+      "post": {
+        "tags": ["Comments"],
+        "summary": "댓글 추가",
+        "operationId": "createComments",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title", "contents", "owner", "pwd"],
+                "properties": {
+                  "boardId": {
+                    "type": "integer"
+                  },
+                  "msg": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "pcId": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "댓글 추가 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
                       "type": "string",
-                      "example": "access token..."
+                      "example": "댓글 추가 성공"
                     },
-                    "refreshToken": {
-                      "type": "string",
-                      "example": "refresh token..."
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "comments": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": 1
+                            },
+                            "msg": {
+                              "type": "string"
+                            },
+                            "owner": {
+                              "type": "string",
+                              "example": "jhwmon"
+                            },
+                            "pcId": {
+                              "type": "integer"
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "example": "2022-04-24 12:00:00"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "example": "2022-04-24 13:01:02"
+                            }
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -249,10 +571,6 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 4000
-                    },
                     "message": {
                       "type": "string",
                       "example": "잘못 된 요청"
@@ -266,413 +584,20 @@
         "x-codegen-request-body-name": "body"
       }
     },
-    "/auth/refresh": {
+    "/keywords/matching": {
       "post": {
-        "tags": ["Auth"],
-        "summary": "광고파트너 토큰 재발급",
-        "operationId": "refreshUser",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "토큰 재발급 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 2000
-                    },
-                    "accessToken": {
-                      "type": "string",
-                      "example": "access token..."
-                    },
-                    "refreshToken": {
-                      "type": "string",
-                      "example": "refresh token..."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/check": {
-      "get": {
-        "tags": ["Auth"],
-        "summary": "광고파트너 토큰 유효성 체크",
-        "operationId": "checkToken",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "Bearer abcde..."
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "토큰 유효",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 2000
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "유효한 토큰"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "필수 값 부족",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 4000
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "토큰이 필요합니다."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "인증 오류",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 4010
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "인증 오류"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Retrieve all users",
-        "operationId": "findUsers",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "users": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "integer",
-                                "format": "int64"
-                              },
-                              "userid": {
-                                "type": "integer"
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "phone": {
-                                "type": "string"
-                              },
-                              "email": {
-                                "type": "string"
-                              },
-                              "createTime": {
-                                "type": "string"
-                              },
-                              "updateTime": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "example": [
-                            {
-                              "id": 100,
-                              "userid": "user1",
-                              "name": "name1",
-                              "phone": "010-1111-1111",
-                              "email": "user1@gmail.com",
-                              "createTime": "2021-10-26 12:00:00",
-                              "updateTime": "2021-10-26 13:00:01"
-                            },
-                            {
-                              "id": 101,
-                              "userid": "user2",
-                              "name": "name2",
-                              "phone": "010-1111-2222",
-                              "email": "user2@gmail.com",
-                              "createTime": "2021-10-26 12:00:00",
-                              "updateTime": "2021-10-26 13:00:01"
-                            }
-                          ]
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "인증 에러"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      }
-    },
-    "/users/{id}": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Retrieve user by id",
-        "operationId": "findUserById",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user to return",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number",
-                      "example": 2000
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "integer",
-                              "example": 100
-                            },
-                            "userid": {
-                              "type": "string",
-                              "example": "jmonaco88@gmail.com"
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "본명"
-                            },
-                            "phone": {
-                              "type": "string",
-                              "example": "01011112222"
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "jmonaco88@gmail.com"
-                            },
-                            "createTime": {
-                              "type": "string",
-                              "example": "2021-10-22 12:00:00"
-                            },
-                            "updateTime": {
-                              "type": "string",
-                              "example": "2021-10-22 13:01:02"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "인증 오류"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      },
-      "patch": {
-        "tags": ["Users"],
-        "summary": "Update User By Id",
-        "operationId": "updateUserById",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user to update",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "tags": ["Keyword"],
+        "summary": "키워드 매칭",
+        "operationId": "matchingKeywords",
         "requestBody": {
           "required": true,
-          "description": "User fields to update",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": ["msg"],
                 "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "phone": {
-                    "type": "string"
-                  },
-                  "email": {
+                  "msg": {
                     "type": "string"
                   }
                 }
@@ -682,7 +607,7 @@
         },
         "responses": {
           "200": {
-            "description": "successful operation",
+            "description": "키워드 매칭",
             "content": {
               "application/json": {
                 "schema": {
@@ -690,520 +615,15 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "example": "수정 성공"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "integer",
-                              "example": 100
-                            },
-                            "userid": {
-                              "type": "string",
-                              "example": "jmonaco88@google.com"
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "본명"
-                            },
-                            "phone": {
-                              "type": "string",
-                              "example": "01011112222"
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "jmonaco88@gmail.com"
-                            },
-                            "createTime": {
-                              "type": "string",
-                              "example": "2021-10-22 12:00:00"
-                            },
-                            "updateTime": {
-                              "type": "string",
-                              "example": "2021-10-22 13:01:02"
-                            }
-                          }
-                        }
-                      }
+                      "example": "키워드 알림 성공"
                     }
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {}
           }
         },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
         "x-codegen-request-body-name": "body"
-      },
-      "delete": {
-        "tags": ["Users"],
-        "summary": "Delete User By Id",
-        "operationId": "deleteUserById",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user to delete",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {}
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      }
-    },
-    "/users/{id}/password": {
-      "patch": {
-        "tags": ["Users"],
-        "summary": "Update Password User By Id",
-        "operationId": "updateUserPasswordById",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user to update",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "description": "User password field to update",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "password": {
-                    "type": "string"
-                  },
-                  "newPassword": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "광고파트너 패스워드 업데이트 성공"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string",
-                          "example": "인증 에러"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      },
-      "delete": {
-        "tags": ["Users"],
-        "summary": "Delete User By Id",
-        "operationId": "deleteUserById",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of user to delete",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {}
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      }
-    },
-    "/users/me": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Retrieve me",
-        "operationId": "findUserByMe",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "description": "access token",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "no": {
-                              "type": "integer",
-                              "example": 100
-                            },
-                            "userid": {
-                              "type": "string",
-                              "example": "jmonaco88@gmail.com"
-                            },
-                            "name": {
-                              "type": "string",
-                              "example": "본명"
-                            },
-                            "phone": {
-                              "type": "string",
-                              "example": "01011112222"
-                            },
-                            "email": {
-                              "type": "string",
-                              "example": "jmonaco88@gmail.com"
-                            },
-                            "createTime": {
-                              "type": "string",
-                              "example": "2021-10-22 12:00:00"
-                            },
-                            "updateTime": {
-                              "type": "string",
-                              "example": "2021-10-22 13:01:02"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Missing credentials",
-            "content": {}
-          },
-          "401": {
-            "description": "Invalid token, please log in or sign up",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        },
-                        "trace": {
-                          "type": "object",
-                          "properties": {
-                            "statusCode": {
-                              "type": "number"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "x-codegen-request-body-name": "body"
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "User": {
-        "type": "object",
-        "required": ["userid", "pwd"],
-        "properties": {
-          "no": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "userid": {
-            "type": "integer"
-          }
-        },
-        "xml": {
-          "name": "User"
-        }
-      }
-    },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
       }
     }
   }
