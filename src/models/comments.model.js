@@ -55,7 +55,7 @@ module.exports = (sequelize) => {
   Comments.associate = function (models) {
     Comments.belongsTo(models.Board, { as: 'board', foreignKey: 'boardId' });
     Comments.hasMany(models.SubComments, {
-      as: 'SubComments',
+      as: 'subComments',
       foreignKey: 'pcId',
     });
   };
